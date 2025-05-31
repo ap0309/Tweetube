@@ -1,0 +1,19 @@
+{
+  "name": "tweetube",
+  "version": "1.0.0",
+  "description": "A website where you can upload and stream videos and also tweet your opions and communicate with people.",
+  "keywords": [
+    "javascript",
+    "backend",
+    "express",
+    "MongoDB",
+    "mongoose"
+  ],
+  "license": "ISC",
+  "author": "Ayush Patel",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
