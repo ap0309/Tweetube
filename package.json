@@ -2,6 +2,7 @@
   "name": "tweetube",
   "version": "1.0.0",
   "description": "A website where you can upload and stream videos and also tweet your opions and communicate with people.",
+  "type": "module",
   "keywords": [
     "javascript",
     "backend",
@@ -13,14 +14,15 @@
   "author": "Ayush Patel",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
-  }
-  ,
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
   "devDependencies": {
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "moongose": "^1.0.0"
   }
 }
