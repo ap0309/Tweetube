@@ -1,7 +1,7 @@
 
 # 🎥 Tweetube
 
-**Tweetube** is a full-fledged backend service built using **Node.js** and **Express**, simulating the core functionalities of a video-sharing platform. From user authentication to channel subscriptions and watch history tracking, this project showcases how to design a scalable, RESTful API with secure and efficient backend logic.
+**Tweetube** is a hybrid backend service combining the core features of a video-sharing platform with social elements inspired by Twitter — enabling users to share videos, follow channels, and interact through a dynamic, media-first experience. From user authentication to channel subscriptions and watch history tracking, this project showcases how to design a scalable, RESTful API with secure and efficient backend logic.
 
 ---
 
