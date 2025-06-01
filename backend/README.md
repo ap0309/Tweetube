@@ -133,8 +133,3 @@ tweetube-backend/
 ## 📬 Feedback & Contributions
 
 Feel free to fork, contribute, or drop feedback. This project is built for learning, experimentation, and growth. Future additions may include playlists, video uploads, comments, and more!
-
-## 👤 Author
-
-**Ayush Patel**  
-GitHub: [@ap0309](https://github.com/ap0309)
