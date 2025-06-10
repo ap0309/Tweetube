@@ -1,4 +1,4 @@
-import express from "exprss";
+import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors"
 
@@ -20,5 +20,8 @@ app.use(
 app.use(express.static("public"));
 app.use(cookieParser());
 
-
+//routes 
+import {userRouter} from "./routes/user.route.js"
+//router declaration 
+app.use("/api/v1/user", userRouter);
 export {app};
