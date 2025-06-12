@@ -15,8 +15,8 @@ const generateAccessAndRefreshTokens = async(userID)=>{
        await user.save({validateBeforeSave: false})
 
        return {accessToken , refreshToken}
-    }catch{
-        throw new ApiError(500 , "Something went wrong while generating ref and access tokens")
+    }catch(err){
+        throw new ApiError(500 , err)
     }
 }
 
@@ -83,7 +83,7 @@ const registerUser = asyncHandler(
 const loginUser = asyncHandler(
     async(req,res)=>{
         const {username , email , password} = req.body
-        if(!username || !email) throw new ApiError(400,"Username or Email is required")
+        if(!username &&  !email) throw new ApiError(400,"Username or Email is required")
         
         const user = await User.findOne({$or : [{username},{email}]})
         if(!user) throw new ApiError(404, "User does not exist");
@@ -92,6 +92,7 @@ const loginUser = asyncHandler(
        if(!isPasswordValid) throw new ApiError(404, "Password is incorrect");
 
        // we will gen acc and ref many tokens so making a method
+       console.log(user);
        const {accessToken , refreshToken} = await generateAccessAndRefreshTokens(user._id)
        // now send back these tokens in form of cookies
 
