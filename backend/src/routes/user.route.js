@@ -27,21 +27,13 @@ userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(verifyJwt, logoutUser);
 userRouter.route("/refresh-token").post(refreshAccessToken);
 userRouter.route("/change-password").post(verifyJwt, changeCurrentPassword);
-userRouter.route("/get-user").get(verifyJwt, getCurrentUser);
-userRouter.route("/update-account").post(verifyJwt, updateAccountDetails);
+userRouter.route("/current-user").get(verifyJwt, getCurrentUser);
+userRouter.route("/update-account").patch(verifyJwt, updateAccountDetails);
 userRouter
-  .route("/update-avtar")
-  .post(
-    await upload.fields({ name: "avtar", maxCount: 1 }),
-    verifyJwt,
-    updateUserAvtar
-  );
+  .route("avtar")
+  .patch(await upload.single("avtar"), verifyJwt, updateUserAvtar);
 userRouter
-  .route("/update-coverImage")
-  .post(
-    await upload.fields({ name: "coverImage", maxCount: 1 }),
-    verifyJwt,
-    updateUserCoverImage
-  );
+  .route("/cover-image")
+  .patch(await upload.single("coverImage"), verifyJwt, updateUserCoverImage);
 
 export { userRouter };

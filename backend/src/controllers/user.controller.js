@@ -1,7 +1,10 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ref } from "process";
 import jwt from "jsonwebtoken";
@@ -238,46 +241,71 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvtar = asyncHandler(async (req, res) => {
-  const newAvtarLocalpath = req.files?.avtar[0]?.path;
-  if (!newAvtarLocalpath) throw new ApiError(400, " Avtar file missing");
-  const newAvtar = await uploadOnCloudinary(newAvtarLocalpath);
-  if (!newAvtar.url) {
-    throw new ApiError(500, "Issue while Uploading on Cloudinary");
-  }
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: { avtar: newAvtar.url },
-    },
-    { new: true }
-  ).select("-password");
+  const newAvtarLocalpath = req.files?.avtar?.[0]?.path;
+  if (!newAvtarLocalpath) throw new ApiError(400, "Avtar file missing");
 
-  if (!updatedUser) throw new ApiError(400, "User not found");
+  // Upload new avtar
+  const newAvtar = await uploadOnCloudinary(newAvtarLocalpath);
+  if (!newAvtar?.url) throw new ApiError(500, "Error uploading to Cloudinary");
+
+  // Fetch only the current avtar URL
+  const currentUser = await User.findById(req.user._id).select("avtar");
+  if (!currentUser) throw new ApiError(404, "User not found");
+
+  const toDeleteonCloudinary = currentUser.avtar;
+
+  // Now update avtar with new URL
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    { avtar: newAvtar.url },
+    { new: true, runValidators: false, select: "-password" }
+  );
+
+  // Delete old image after update to avoid breaking user if delete fails
+  if (toDeleteonCloudinary) {
+    await deleteFromCloudinary(toDeleteonCloudinary);
+  }
+
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Avtar updated Successfully"));
+    .json(new ApiResponse(200, updatedUser, "Avtar updated successfully"));
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const newCoverImageLocalpath = req.files?.coverImage?.[0]?.path;
-  if (!newCoverImageLocalpath)
-    throw new ApiError(400, " CoverImage file missing");
-  const newCoverImage = await uploadOnCloudinary(newAvtarLocalpath);
-  if (!newCoverImage.url) {
-    throw new ApiError(500, "Issue while Uploading on Cloudinary");
+  if (!newCoverImageLocalpath) {
+    throw new ApiError(400, "Cover image file is missing");
   }
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: { coverImage: newCoverImage.url },
-    },
-    { new: true }
-  ).select("-password");
 
-  if (!updatedUser) throw new ApiError(400, "User not found");
+  // Upload new cover image to Cloudinary
+  const newCoverImage = await uploadOnCloudinary(newCoverImageLocalpath);
+  if (!newCoverImage?.url) {
+    throw new ApiError(500, "Issue while uploading to Cloudinary");
+  }
+
+  // Get the previous coverImage URL
+  const currentUser = await User.findById(req.user._id).select("coverImage");
+  if (!currentUser) throw new ApiError(404, "User not found");
+
+  const toDeleteOnCloudinary = currentUser.coverImage;
+
+  // Update user with new cover image URL
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    { coverImage: newCoverImage.url },
+    { new: true, runValidators: false, select: "-password" }
+  );
+
+  // Delete old cover image from Cloudinary (optional safety check)
+  if (toDeleteOnCloudinary) {
+    await deleteFromCloudinary(toDeleteOnCloudinary);
+  }
+
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "CoverImage updated Successfully"));
+    .json(
+      new ApiResponse(200, updatedUser, "Cover image updated successfully")
+    );
 });
 
 export {
