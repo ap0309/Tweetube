@@ -1,6 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 ./DATABASE_OPTIMIZATION_GUIDE.md
+DATABASE_OPTIMIZATION_GUIDE.md
 ### Node ###
 # Logs
 logs
