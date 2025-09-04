@@ -18,7 +18,7 @@ const router = Router();
 router.use(verifyJwt); // Apply verifyJWT middleware to all routes in this file
 
 // router.route("/").post(createPlaylist)
-router.route("/").post(verifyJwt, upload.single("thumbnail"), createPlaylist)
+router.route("/").post(upload.single("thumbnail"), createPlaylist)
 
 router
     .route("/:playlistId")

@@ -3,35 +3,35 @@ import {upload} from '../middlewares/multer.middleware.js'
 import {addVideoToWatchHistory , getWatchHistory , getUserChannelProfile , updateUserCoverImage , updateUserAvatar , loginUser, logoutUser, refreshAccessToken, registerUser , changeCurrentPassword , updateAccountDetails,getCurrentUser  } from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
-const router = Router()
-router.route("/register").post(
+const userRouter = Router()
+userRouter.route("/register").post(
     upload.fields([
-        { name: "avatar", maxCount: 1 }, 
+        { name: "avtar", maxCount: 1 }, 
         { name: "coverImage", maxCount: 1 }
     ]),
     (req, res, next) => {
-        console.log("Files:", req.files); // This will help debug whether files are being received
+        console.log("Files:", req.files); 
         console.log("Body:", req.body);
-        next();  // Continue to the controller if files are present
+        next();  
     },
     registerUser
 );
 
-router.route( "/login" ).post(loginUser)
+userRouter.route( "/login" ).post(loginUser);
 
-router.route( "/logout" ).post( verifyJwt ,  logoutUser)
+userRouter.route( "/logout" ).post( verifyJwt ,  logoutUser);
 
-router.route("/refresh-token").post(refreshAccessToken)
-router.route("/change-password").post(verifyJwt, changeCurrentPassword)
-router.route("/current-user").get(verifyJwt, getCurrentUser)
-router.route("/update-account").patch(verifyJwt, updateAccountDetails)
+userRouter.route("/refresh-token").post(refreshAccessToken);
+userRouter.route("/change-password").post(verifyJwt, changeCurrentPassword);
+userRouter.route("/current-user").get(verifyJwt, getCurrentUser);
+userRouter.route("/update-account").patch(verifyJwt, updateAccountDetails);
 
-router.route("/avatar").patch(verifyJwt, upload.single("avatar"), updateUserAvatar)
-router.route("/cover-image").patch(verifyJwt, upload.single("coverImage"), updateUserCoverImage)
+userRouter.route("/avatar").patch(verifyJwt, upload.single("avatar"), updateUserAvatar);
+userRouter.route("/cover-image").patch(verifyJwt, upload.single("coverImage"), updateUserCoverImage);
 
-router.route("/c/:username").get(verifyJwt, getUserChannelProfile)
-router.route("/history").get(verifyJwt, getWatchHistory)
-router.route("/addVideoToWatchHistory").post(verifyJwt, addVideoToWatchHistory)
+userRouter.route("/c/:username").get(verifyJwt, getUserChannelProfile);
+userRouter.route("/history").get(verifyJwt, getWatchHistory);
+userRouter.route("/addVideoToWatchHistory").post(verifyJwt, addVideoToWatchHistory);
 
-export default router
+export default userRouter
 
