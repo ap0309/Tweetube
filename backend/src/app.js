@@ -13,15 +13,15 @@ app.use(express.static("public"))
 app.use(cookieParser()) ;
 
 // routes import 
-import userRouter from './routs/user.routes.js'
-import subscriptionRouter from "./routs/subscription.routes.js"
-import tweetRouter from './routs/tweet.routes.js'
-import videoRouter from "./routs/video.routes.js"
-import healthcheckRouter from './routs/healthcheck.routes.js'
-import likeRouter from './routs/like.routes.js'
-import commentRouter from './routs/comment.routes.js'
-import playlistRouter from './routs/playlist.routes.js'
-import dashboardRouter from './routs/dashboard.routes.js'
+import userRouter from './routes/user.routes.js'
+import subscriptionRouter from "./routes/subscription.routes.js"
+import tweetRouter from './routes/tweet.routes.js'
+import videoRouter from "./routes/video.routes.js"
+import healthcheckRouter from './routes/healthcheck.routes.js'
+import likeRouter from './routes/like.routes.js'
+import commentRouter from './routes/comment.routes.js'
+import playlistRouter from './routes/playlist.routes.js'
+import dashboardRouter from './routes/dashboard.routes.js'
 
 // routes declaration
 app.use("/api/v1/users",userRouter);

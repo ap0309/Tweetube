@@ -22,8 +22,9 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowecase: true,
+            lowercase: true,
             trim: true, 
+            index: true
         } ,
         avatar : {
             type : String , 
@@ -32,12 +33,59 @@ const userSchema = new Schema(
         coverImage : {
             type : String
         } , 
-        watchHistory: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Video"
+        // Denormalized counters for performance
+        subscriberCount: {
+            type: Number,
+            default: 0,
+            index: true
+        },
+        videoCount: {
+            type: Number,
+            default: 0,
+            index: true
+        },
+        totalViews: {
+            type: Number,
+            default: 0,
+            index: true
+        },
+        // User preferences and settings
+        preferences: {
+            notifications: {
+                email: { type: Boolean, default: true },
+                push: { type: Boolean, default: true },
+                comments: { type: Boolean, default: true },
+                subscriptions: { type: Boolean, default: true }
+            },
+            privacy: {
+                showSubscriberCount: { type: Boolean, default: true },
+                showViewCount: { type: Boolean, default: true },
+                allowComments: { type: Boolean, default: true }
+            },
+            channel: {
+                description: String,
+                country: String,
+                language: { type: String, default: 'en' },
+                category: String
             }
-        ],
+        },
+        // Account status and verification
+        isVerified: {
+            type: Boolean,
+            default: false,
+            index: true
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
+            index: true
+        },
+        lastActiveAt: {
+            type: Date,
+            default: Date.now,
+            index: true
+        },
+        // Remove watchHistory from user - will be separate collection
         password : {
             type : String , 
             required : [true , "password is required"]
@@ -51,15 +99,20 @@ const userSchema = new Schema(
     }
 )
 
+// Compound indexes for common queries
+userSchema.index({ username: 1, isActive: 1 });
+userSchema.index({ email: 1, isActive: 1 });
+userSchema.index({ subscriberCount: -1, isActive: 1 }); // For trending creators
+userSchema.index({ totalViews: -1, isActive: 1 }); // For most viewed creators
+userSchema.index({ createdAt: -1, isActive: 1 }); // For new creators
+
 userSchema.pre( "save" , async function (next) {
     if( ! this.isModified("password") ) return next()
     this.password = await bcrypt.hash(this.password , 10)
     next()
 } ) 
 
-
 userSchema.methods.isPasswordCorrect = async function(password){
-    console.log( password , this.password )
     return await bcrypt.compare(password, this.password)
 }
 
@@ -77,11 +130,11 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 }
+
 userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
             _id: this._id,
-            
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -89,4 +142,21 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
+
+// Method to update subscriber count
+userSchema.methods.updateSubscriberCount = async function() {
+    const count = await mongoose.model('Subscription').countDocuments({ channel: this._id });
+    this.subscriberCount = count;
+    await this.save();
+    return count;
+}
+
+// Method to update video count
+userSchema.methods.updateVideoCount = async function() {
+    const count = await mongoose.model('Video').countDocuments({ owner: this._id, isPublished: true });
+    this.videoCount = count;
+    await this.save();
+    return count;
+}
+
 export const User = mongoose.model("User" , userSchema)
