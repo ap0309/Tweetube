@@ -53,6 +53,31 @@ const watchHistorySchema = new Schema(
             type: String,
             enum: ['home', 'search', 'subscriptions', 'trending', 'playlist', 'external', 'unknown'],
             default: 'unknown'
+        },
+        // Archive fields for channel deletion
+        archived: {
+            type: Boolean,
+            default: false,
+            index: true
+        },
+        archivedAt: {
+            type: Date,
+            index: true
+        },
+        archivedReason: {
+            type: String,
+            enum: ['channel_deleted', 'user_request', 'policy_violation'],
+            index: true
+        },
+        // Metadata for deleted content
+        metadata: {
+            deletedChannel: {
+                type: Boolean,
+                default: false
+            },
+            originalVideoId: {
+                type: Schema.Types.ObjectId
+            }
         }
     },
     {
