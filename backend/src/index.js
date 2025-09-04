@@ -1,26 +1,23 @@
-//when using database use try catch and async await
-//require("dotenv").config({path:"./env"})
-import dotenv from "dotenv"
+import dotenv from "dotenv" ; 
+import express from "express"
+import mongoose from "mongoose";
 import connectDB from "./db/index.js";
-import { app } from "./app.js"
+import { app } from "./app.js";
+
 
 dotenv.config({
-    path: './.env'
-});
+    path : "./.env"
+})
+
+console.log(`port ${process.env.PORT}` )
 
 connectDB()
-    .then(() => {
-        app.on("error", (error) => {
-            console.log("App encountered an error:", error);
-            throw error;
-        });
-
-        app.listen(process.env.PORT || 8000, () => {
-            console.log(`🚀 Server is running on port ${process.env.PORT || 8000}`);
-        });
-    })
-    .catch((error) => {
-        console.log("❌ MongoDB connection failed:", error);
-        throw error;
-    });
-
+.then( () => {
+    app.listen( process.env.PORT || 8000 , () => {
+        // app
+        console.log(` server is running on : ${process.env.PORT}`) ; 
+    }  )
+}
+).catch( (err) => {
+    console.log(`mongoDB database is not connected : ` , err ) ; 
+} ) ; 
