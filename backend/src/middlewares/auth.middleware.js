@@ -14,7 +14,7 @@ export const verifyJwt = asyncHandler( async (req , _ , next) => {
  
      const decodedToken =  jwt.verify( token , process.env.ACCESS_TOKEN_SECRET )
 
-      //// my comments
+
      console.log("this is decoded jwt from authMiddleware...") ; 
      console.log(decodedToken ) ; 
  

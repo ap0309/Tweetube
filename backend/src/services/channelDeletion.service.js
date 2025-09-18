@@ -383,20 +383,19 @@ class ChannelDeletionService {
                     throw new ApiError(400, 'Channel recovery deadline has passed');
                 }
                 
-                // Create new user with original data
+                
                 const recoveredUser = await User.create([{
                     _id: newUserId,
                     username: deletedChannel.username,
                     fullName: deletedChannel.fullName,
                     email: deletedChannel.email,
-                    avatar: 'https://via.placeholder.com/150', // Default avatar
+                    avatar: 'https://via.placeholder.com/150', 
                     coverImage: '',
-                    subscriberCount: 0, // Start fresh
+                    subscriberCount: 0, 
                     videoCount: 0,
                     totalViews: 0
                 }], { session });
-                
-                // Mark as non-recoverable
+               
                 deletedChannel.isRecoverable = false;
                 await deletedChannel.save({ session });
                 
